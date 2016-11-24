@@ -30,11 +30,12 @@
 
 #include "setup.h"
 
-#ifndef NOBALLOC
 #include "client.h"
 #include "tools.h"
 #include "memory.h"
 #include "ircd_defs.h"
+
+#if USE_BLOCK_ALLOC
 
 
 /*! \brief Block contains status information for
@@ -84,7 +85,9 @@ extern void block_heap_report_stats(struct Client *);
 typedef struct BlockHeap BlockHeap;
 /* This is really kludgy, passing ints as pointers is always bad. */
 #define BlockHeapCreate(blah, es, epb) ((BlockHeap*)(es))
-#define BlockHeapAlloc(x) MyMalloc((int)x)
+#define BlockHeapAlloc(x) MyMalloc((size_t)x)
 #define BlockHeapFree(x,y) MyFree(y)
+#define initBlockHeap()
+#define block_heap_report_stats(x)
 #endif /* NOBALLOC */
 #endif /* INCLUDED_balloc_h */
