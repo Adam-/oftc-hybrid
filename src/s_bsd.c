@@ -328,12 +328,12 @@ ssl_handshake(fde_t *fd, struct Client *client_p)
     {
       case SSL_ERROR_WANT_WRITE:
         comm_setselect(&client_p->localClient->fd, COMM_SELECT_WRITE,
-	               (PF *) ssl_handshake, client_p, 30);
+	               (PF *) ssl_handshake, client_p, 30000);
         return;
 
       case SSL_ERROR_WANT_READ:
         comm_setselect(&client_p->localClient->fd, COMM_SELECT_READ,
-	               (PF *) ssl_handshake, client_p, 30);
+	               (PF *) ssl_handshake, client_p, 30000);
         return;
 
       default:
@@ -342,6 +342,7 @@ ssl_handshake(fde_t *fd, struct Client *client_p)
     }
   }
 
+  comm_setselect(&client_p->localClient->fd, COMM_SELECT_READ | COMM_SELECT_WRITE, NULL, NULL, 0);
   comm_settimeout(&client_p->localClient->fd, 0, NULL, NULL);
   execute_callback(auth_cb, client_p);
 }
